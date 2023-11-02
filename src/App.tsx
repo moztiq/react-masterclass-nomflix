@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useScroll, useTransform } from 'framer-motion';
 import { useEffect } from 'react';
 
 const Wrapper = styled(motion.div)`
-  height: 100vh;
+  height: 200vh;
   width: 100vw;
   display: flex;
   justify-content: center;
@@ -35,15 +35,18 @@ function App() {
     ],
   );
 
+  const { scrollY, scrollYProgress } = useScroll();
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 5]);
+
   useEffect(() => {
-    x.onChange(() => {
-      console.log('x', x.get());
+    scrollY.on('change', () => {
+      console.log(scrollY.get(), scrollYProgress.get());
     });
-  }, [x]);
+  }, [scrollY, scrollYProgress]);
 
   return (
     <Wrapper style={{ background }}>
-      <Box style={{ x, rotate }} drag="x" dragSnapToOrigin />
+      <Box style={{ x, rotate, scale }} drag="x" dragSnapToOrigin />
     </Wrapper>
   );
 }
