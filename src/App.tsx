@@ -1,11 +1,6 @@
 import styled from 'styled-components';
-import {
-  motion,
-  MotionValue,
-  useMotionValue,
-  useMotionValueEvent,
-} from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { useEffect } from 'react';
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -15,15 +10,9 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-interface IBoxProps {
-  xvalue: number;
-}
-
-const Box = styled(motion.div)<IBoxProps>`
-  width: ${(props) =>
-    props.xvalue >= 0 ? 200 - props.xvalue / 5 : 200 - props.xvalue / 5}px;
-  height: ${(props) =>
-    props.xvalue >= 0 ? 200 - props.xvalue / 5 : 200 - props.xvalue / 5}px;
+const Box = styled(motion.div)`
+  width: 200px;
+  height: 200px;
   background-color: rgba(255, 255, 255, 1);
   box-shadow:
     0 2px 3px rgba(0, 0, 0, 0.1),
@@ -33,15 +22,19 @@ const Box = styled(motion.div)<IBoxProps>`
 
 function App() {
   const x = useMotionValue(0);
-  const [xvalue, setXValue] = useState(0);
 
-  useMotionValueEvent(x, 'change', (latest) => {
-    setXValue((prev) => x.get());
-  });
+  const scale = useTransform(x, [-800, 800], [2, 0]);
+
+  useEffect(() => {
+    x.onChange(() => {
+      console.log('x', x.get());
+      console.log('scale', scale.get());
+    });
+  }, [x]);
 
   return (
     <Wrapper>
-      <Box style={{ x }} drag="x" dragSnapToOrigin xvalue={xvalue} />
+      <Box style={{ x, scale }} drag="x" dragSnapToOrigin />
     </Wrapper>
   );
 }
