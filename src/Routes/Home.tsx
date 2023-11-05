@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 const Wrapper = styled.div`
   background-color: black;
+  height: 130vh;
 `;
 
 const Loader = styled.div`
@@ -55,10 +56,29 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   height: 200px;
   color: white;
   font-size: 24px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3)),
     url(${(props) => props.bgPhoto});
   background-size: cover;
   background-position: center center;
+  &:first-child {
+    transform-origin: left;
+  }
+  &:last-child {
+    transform-origin: right;
+  }
+`;
+
+const Info = styled(motion.div)`
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+  position: absolute;
+  bottom: -20px;
+  width: 100%;
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
 `;
 
 const rowVariants = {
@@ -70,6 +90,32 @@ const rowVariants = {
   },
   exit: {
     x: -window.outerWidth - 5,
+  },
+};
+
+const boxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -10,
+    transition: {
+      delay: 0.5,
+      duration: 0.3,
+      type: 'tween',
+    },
+  },
+};
+
+const infoVariants = {
+  hover: {
+    opacity: 1,
+    transition: {
+      delay: 0.5,
+      duration: 0.3,
+      type: 'tween',
+    },
   },
 };
 
@@ -130,10 +176,16 @@ function Home() {
                   .slice(index * offset, (index + 1) * offset)
                   .map((movie) => (
                     <Box
+                      variants={boxVariants}
+                      whileHover="hover"
+                      initial="normal"
                       key={movie.id}
                       bgPhoto={makeImagePath(movie.backdrop_path, 'w500')}
+                      transition={{ type: 'tween' }}
                     >
-                      {movie.title}
+                      <Info variants={infoVariants}>
+                        <h4>{movie.title}</h4>
+                      </Info>
                     </Box>
                   ))}
               </Row>
